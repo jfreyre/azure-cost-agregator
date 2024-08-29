@@ -1,5 +1,5 @@
 import axios from "axios";
-import { accessToken } from "./constants.js";
+import { accessToken, startDate, endDate } from "./constants.js";
 
 export async function getSubscriptions() {
   const url = `https://management.azure.com/subscriptions?api-version=2020-01-01`;
@@ -19,9 +19,11 @@ export async function getSubscriptions() {
   } catch (error) {
     console.error(
       "Erreur lors de la récupération des souscriptions:",
-      error.response ? error.response.data : error.message
+      error.message,
+      error.response.data.error.message
     );
-    throw error;
+    
+    throw new Error(error.response.data.error.message);
   }
 }
 
@@ -50,11 +52,7 @@ export async function getCostForResourceGroup(
   subscriptionId,
   resourceGroupName
 ) {
-  const startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-    .toISOString()
-    .split("T")[0];
-  const endDate = new Date().toISOString().split("T")[0];
-
+  
   const url = `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.CostManagement/query?api-version=2023-03-01`;
 
   const requestData = {
@@ -82,10 +80,10 @@ export async function getCostForResourceGroup(
         "Content-Type": "application/json",
       },
     });
-
+    console.log(response.data.properties)
     const totalCost = response.data.properties.rows[0][0];
     console.log(
-      `Le coût total pour le groupe de ressources ${resourceGroupName} (souscription ${subscriptionId}) est de ${totalCost} USD pour le mois en cours.`
+      `\t ${resourceGroupName} -> ${totalCost}`
     );
   } catch (error) {
     console.error(

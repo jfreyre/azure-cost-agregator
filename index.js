@@ -13,15 +13,12 @@ async function main() {
       console.log(`-> ${subscription.displayName} (ID: ${subscription.id})`);
 
       const resourceGroups = await getResourceGroups(subscription.id);
-      console.log(
-        `\t -> Groupes de ressources trouvés pour la souscription ${
-          subscription.displayName
-        } : ${resourceGroups.join(", ")}`
-      );
 
       for (const resourceGroup of resourceGroups) {
         await getCostForResourceGroup(subscription.id, resourceGroup);
+        
       }
+      exit;
     }
   } catch (error) {
     console.error("Erreur dans le traitement:", error);
