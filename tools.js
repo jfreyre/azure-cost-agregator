@@ -53,7 +53,7 @@ export async function getSubscriptions() {
     console.error(
       "Erreur lors de la récupération des souscriptions:",
       error.message,
-      error.response.data.error.message
+      error.response?.data.error.message
     );
 
     throw new Error(error.response.data.error.message);
@@ -71,7 +71,6 @@ export async function getResourceGroups(subscriptionId) {
         "Content-Type": "application/json",
       },
     });
-    console.log(response.data);
     return response.data.value.map((group) => group.name);
   } catch (error) {
     console.error(
@@ -116,8 +115,12 @@ export async function getCostForResourceGroup(
       data: requestData,
     });
 
-    // console.log(response.data.properties);
-    const totalCost = response.data.properties.rows[0][0];
+    // Check if a cost exist or not
+    const totalCost =
+      response.data.properties.rows.length > 0
+        ? response.data.properties.rows[0][0]
+        : 0;
+
     console.log(`\t ${resourceGroupName} -> ${totalCost}`);
   } catch (error) {
     console.error(

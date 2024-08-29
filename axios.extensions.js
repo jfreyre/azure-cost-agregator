@@ -4,15 +4,30 @@ import axios from "axios";
 export async function makeRequestWithRetry(
   url,
   options,
-  retries = 3,
+  retries = 6,
   backoff = 1500
 ) {
   try {
-    return await axios(url, options);
+    var response = await axios(url, options);
+
+    return response;
   } catch (error) {
+    // IF too many request, we will wait a bit
     if (retries > 0 && error.response && error.response.status === 429) {
-      console.log(`Trop de requêtes, nouvelle tentative dans ${backoff}ms...`);
-      await new Promise((resolve) => setTimeout(resolve, backoff));
+      let msftRetryHeader = error.response.headers.get(
+        "x-ms-ratelimit-microsoft.costmanagement-tenant-retry-after"
+      );
+
+      if (msftRetryHeader !== "") {
+        console.log("as suggested by msft, retry in ", msftRetryHeader * 1000);
+        await new Promise((resolve) =>
+          setTimeout(resolve, msftRetryHeader * 1000)
+        );
+      } else {
+        console.log(`too much query. backoff in ${backoff}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, backoff));
+      }
+
       return makeRequestWithRetry(url, options, retries - 1, backoff * 2); // Exponential backoff
     } else {
       throw error;
