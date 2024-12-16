@@ -71,7 +71,11 @@ export async function getResourceGroups(subscriptionId) {
         "Content-Type": "application/json",
       },
     });
-    return response.data.value.map((group) => group.name);
+    return response.data.value.map((group) => (
+      {
+        subscriptionId,
+        rgName: group.name
+      }));
   } catch (error) {
     console.error(
       "Erreur lors de la récupération des groupes de ressources:",
@@ -81,11 +85,8 @@ export async function getResourceGroups(subscriptionId) {
   }
 }
 
-export async function getCostForResourceGroup(
-  subscriptionId,
-  resourceGroupName
-) {
-  const url = `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.CostManagement/query?api-version=2023-03-01`;
+export async function getCostForResourceGroup(rgInfo) {
+  const url = `https://management.azure.com/subscriptions/${rgInfo.subscriptionId}/resourceGroups/${rgInfo.rgName}/providers/Microsoft.CostManagement/query?api-version=2023-03-01`;
 
   const requestData = {
     type: "Usage",
@@ -121,10 +122,10 @@ export async function getCostForResourceGroup(
         ? response.data.properties.rows[0][0]
         : 0;
 
-    console.log(`\t ${resourceGroupName} -> ${totalCost}`);
+    console.log(`\t ${rgInfo.rgName} -> ${totalCost}`);
   } catch (error) {
     console.error(
-      `Erreur lors de la récupération des coûts pour le groupe ${resourceGroupName} (souscription ${subscriptionId}):`,
+      `Erreur lors de la récupération des coûts pour le groupe ${rgInfo.rgName} (souscription ${rgInfo.subscriptionId}):`,
       error.response ? error.response.data : error.message
     );
   }
