@@ -74,8 +74,11 @@ export async function getResourceGroups(subscription) {
     });
     return response.data.value.map((group) => (
       {
-        subscriptionId,
-        rgName: group.name
+        subscriptionId: subscription.id,
+        subName: subscription.displayName,
+        rgName: group.name,
+        environment: group.tags.environment,
+        app: group.tags.applicationname
       }));
   } catch (error) {
     console.error(
