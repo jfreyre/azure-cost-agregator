@@ -126,7 +126,7 @@ export async function getCostForResourceGroup(rgInfo) {
         ? response.data.properties.rows[0][0]
         : 0;
 
-    console.log(`\t ${rgInfo.rgName} -> ${totalCost}`);
+    console.log([startDate, new Date(startDate).getFullYear(), rgInfo.app?.toUpperCase(), rgInfo.environment?.toUpperCase(), rgInfo.subName, rgInfo.rgName,  totalCost].join('\t'));
   } catch (error) {
     console.error(
       `Erreur lors de la récupération des coûts pour le groupe ${rgInfo.rgName} (souscription ${rgInfo.subscriptionId}):`,
