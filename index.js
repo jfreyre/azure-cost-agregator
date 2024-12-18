@@ -22,7 +22,7 @@ async function main() {
       
       console.log(`-> Getting RGs of ${subscription.displayName} (ID: ${subscription.id})`);
 
-      var currentGroups = await getResourceGroups(subscription.id);
+      var currentGroups = await getResourceGroups(subscription);
       
       resourceGroups.push(...currentGroups);
     }

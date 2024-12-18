@@ -60,8 +60,9 @@ export async function getSubscriptions() {
   }
 }
 
-export async function getResourceGroups(subscriptionId) {
-  const url = `https://management.azure.com/subscriptions/${subscriptionId}/resourcegroups?api-version=2021-04-01`;
+export async function getResourceGroups(subscription) {
+  
+  const url = `https://management.azure.com/subscriptions/${subscription.id}/resourcegroups?api-version=2021-04-01`;
 
   try {
     const response = await makeRequestWithRetry(url, {
