@@ -8,4 +8,8 @@ Add your [configuration](https://codesandbox.io/docs/projects/learn/setting-up/t
 
 ## How to ?
 
-- First get your token -> `az account get-access-token --resource=https://management.azure.com/`
+First get your token
+
+```powershell
+az account get-access-token --resource=https://management.azure.com/
+```
