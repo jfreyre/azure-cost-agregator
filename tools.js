@@ -72,13 +72,16 @@ export async function getResourceGroups(subscription) {
         "Content-Type": "application/json",
       },
     });
+    
     return response.data.value.map((group) => (
       {
         subscriptionId: subscription.id,
         subName: subscription.displayName,
         rgName: group.name,
         environment: group.tags.environment,
-        app: group.tags.applicationname
+        app: group.tags.applicationname,
+        folioId: group.tags.folioid, 
+        owner: group.tags.owner, 
       }));
   } catch (error) {
     console.error(
@@ -126,7 +129,7 @@ export async function getCostForResourceGroup(rgInfo) {
         ? response.data.properties.rows[0][0]
         : 0;
 
-    console.log([startDate, new Date(startDate).getFullYear(), rgInfo.app?.toUpperCase(), rgInfo.environment?.toUpperCase(), rgInfo.subName, rgInfo.rgName,  totalCost].join('\t'));
+    console.log([startDate, new Date(startDate).getFullYear(), rgInfo.app?.toUpperCase(), rgInfo.environment?.toUpperCase(), rgInfo.subName, rgInfo.rgName, rgInfo.folioId, rgInfo.owner, totalCost].join('\t'));
   } catch (error) {
     console.error(
       `Erreur lors de la récupération des coûts pour le groupe ${rgInfo.rgName} (souscription ${rgInfo.subscriptionId}):`,
